@@ -19,10 +19,45 @@ namespace AspNetCoreCCCapitulo1.Controllers
             new Instituicao() { InstituicaoID = 4, Nome = "UniSulgrandense", Endereco = "Rio Grande do Sul"},
             new Instituicao() { InstituicaoID = 5, Nome = "UniCarioca", Endereco = "Rio de Janeiro"}
             };
+        
+
         // GET: /<controller>/
         public IActionResult Index()
         {
-            return View(instituicoes);
+            return View(instituicoes.OrderBy(i => i.Nome));
+        }
+
+        // GET Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST Create
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+
+        public IActionResult Create(Instituicao instituicao)
+        {
+            instituicoes.Add(instituicao);
+            instituicao.InstituicaoID = instituicoes.Select(i => i.InstituicaoID).Max() + 1;
+            return RedirectToAction("Index");
+        }
+
+        // GET EDIT 
+        public ActionResult Edit(long id)
+        {
+            return View(instituicoes.Where(i => i.InstituicaoID == id).First());
+        }
+
+        // POST Edit
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public IActionResult Edit(Instituicao instituicao)
+        {
+            instituicoes.Remove(instituicoes.Where(i => i.InstituicaoID == instituicao.InstituicaoID).First());
+            instituicoes.Add(instituicao);
+            return RedirectToAction("Index");
         }
     }
 }
